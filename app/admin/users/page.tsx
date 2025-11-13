@@ -1,10 +1,5 @@
 "use client"
-
 import { AdminLayout } from "@/components/admin/admin-layout"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search, Download, Filter } from "lucide-react"
 import { UsersToolbar } from "@/components/admin/UsersToolbar"
 import { UsersTable } from "@/components/admin/UsersTable"
 import { useState } from "react"
