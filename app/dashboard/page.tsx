@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
@@ -8,8 +7,32 @@ import { ScoringFactors } from "@/components/dashboard/scoring-factors"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import DashboardHeader from "@/components/dashboard/DashboardHeader"
+
+const secondaryCards = [
+    {
+        title: "Identity Verification",
+        description: "Secure your account with digital ID",
+        info: {
+            label: "Status:",
+            value: "Verified",
+            extra: "Last verified: 2 days ago",
+        },
+        button: { text: "Review", href: "/identity" },
+    },
+    {
+        title: "Data Sources",
+        description: "Connected data providers improving your score",
+        info: {
+            label: "Connected:",
+            value: "3 sources",
+            extra: "Mobile, e-commerce, utilities",
+        },
+        button: { text: "Manage", href: "/data-sources" },
+    },
+]
+
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -34,17 +57,7 @@ export default function DashboardPage() {
         <DashboardLayout>
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold text-foreground">Welcome back, {user?.firstName}</h1>
-                        <p className="text-muted-foreground mt-1">Here's your credit assessment overview</p>
-                    </div>
-                    <Link href="/assessment">
-                        <Button size="lg">
-                            New Assessment <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                    </Link>
-                </div>
+                <DashboardHeader name={user?.firstName} />
 
                 {/* Main Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -61,49 +74,30 @@ export default function DashboardPage() {
 
                 {/* Secondary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Identity Verification</CardTitle>
-                            <CardDescription>Secure your account with digital ID</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-muted-foreground mb-2">
-                                        Status: <span className="text-primary font-semibold">Verified</span>
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">Last verified: 2 days ago</p>
+                    {secondaryCards.map((card) => (
+                        <Card key={card.title}>
+                            <CardHeader>
+                                <CardTitle>{card.title}</CardTitle>
+                                <CardDescription>{card.description}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-muted-foreground mb-2">
+                                            {card.info.label}{" "}
+                                            <span className="text-primary font-semibold">{card.info.value}</span>
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">{card.info.extra}</p>
+                                    </div>
+                                    <Link href={card.button.href}>
+                                        <Button variant="outline" size="sm">
+                                            {card.button.text}
+                                        </Button>
+                                    </Link>
                                 </div>
-                                <Link href="/identity">
-                                    <Button variant="outline" size="sm">
-                                        Review
-                                    </Button>
-                                </Link>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Data Sources</CardTitle>
-                            <CardDescription>Connected data providers improving your score</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-muted-foreground mb-2">
-                                        Connected: <span className="text-primary font-semibold">3 sources</span>
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">Mobile, e-commerce, utilities</p>
-                                </div>
-                                <Link href="/data-sources">
-                                    <Button variant="outline" size="sm">
-                                        Manage
-                                    </Button>
-                                </Link>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
 
                 {/* Recent Activity */}

@@ -1,19 +1,16 @@
-"use client"
-
-import type React from "react"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { TrendingUp, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { TrendingUp, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function RegisterPage() {
-    const router = useRouter()
+    const router = useRouter();
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -21,35 +18,29 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
         agreeToTerms: false,
-    })
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState("")
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target
+        const { name, value, type, checked } = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: type === "checkbox" ? checked : value,
-        }))
-    }
+        }));
+    };
 
     const handleRegister = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError("")
+        e.preventDefault();
+        setError("");
 
-        if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match")
-            return
-        }
+        if (formData.password !== formData.confirmPassword)
+            return setError("Passwords do not match");
 
-        if (!formData.agreeToTerms) {
-            setError("You must agree to the terms and conditions")
-            return
-        }
+        if (!formData.agreeToTerms)
+            return setError("You must agree to the terms and conditions");
 
-        setLoading(true)
-
-        // Simulate registration
+        setLoading(true);
         setTimeout(() => {
             localStorage.setItem(
                 "user",
@@ -57,11 +48,19 @@ export default function RegisterPage() {
                     email: formData.email,
                     firstName: formData.firstName,
                     lastName: formData.lastName,
-                }),
-            )
-            router.push("/onboarding")
-        }, 1000)
-    }
+                })
+            );
+            router.push("/onboarding");
+        }, 1000);
+    };
+
+    const fields = [
+        { id: "firstName", label: "First Name", placeholder: "John" },
+        { id: "lastName", label: "Last Name", placeholder: "Doe" },
+        { id: "email", label: "Email Address", placeholder: "you@example.com", type: "email" },
+        { id: "password", label: "Password", placeholder: "••••••••", type: "password" },
+        { id: "confirmPassword", label: "Confirm Password", placeholder: "••••••••", type: "password" },
+    ];
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -77,84 +76,68 @@ export default function RegisterPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Create Account</CardTitle>
-                        <CardDescription>Join CreditFlow and get your fair credit assessment</CardDescription>
+                        <CardDescription>
+                            Join CreditFlow and get your fair credit assessment
+                        </CardDescription>
                     </CardHeader>
+
                     <CardContent>
                         <form onSubmit={handleRegister} className="space-y-4">
+                            {/* First & Last name */}
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="firstName">First Name</Label>
+                                {fields.slice(0, 2).map(({ id, label, placeholder }) => (
+                                    <div key={id} className="space-y-2">
+                                        <Label htmlFor={id}>{label}</Label>
+                                        <Input
+                                            id={id}
+                                            name={id}
+                                            placeholder={placeholder}
+                                            value={(formData as any)[id]}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Email, Password, Confirm Password */}
+                            {fields.slice(2).map(({ id, label, placeholder, type }) => (
+                                <div key={id} className="space-y-2">
+                                    <Label htmlFor={id}>{label}</Label>
                                     <Input
-                                        id="firstName"
-                                        name="firstName"
-                                        placeholder="John"
-                                        value={formData.firstName}
+                                        id={id}
+                                        name={id}
+                                        type={type}
+                                        placeholder={placeholder}
+                                        value={(formData as any)[id]}
                                         onChange={handleChange}
                                         required
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="lastName">Last Name</Label>
-                                    <Input
-                                        id="lastName"
-                                        name="lastName"
-                                        placeholder="Doe"
-                                        value={formData.lastName}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                            ))}
+
+                            {error && (
+                                <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm">
+                                    {error}
                                 </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email Address</Label>
-                                <Input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    placeholder="you@example.com"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                <Input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-
-                            {error && <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm">{error}</div>}
+                            )}
 
                             <div className="flex items-center space-x-2">
                                 <Checkbox
                                     id="terms"
                                     name="agreeToTerms"
                                     checked={formData.agreeToTerms}
-                                    onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, agreeToTerms: checked as boolean }))}
+                                    onCheckedChange={(checked) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            agreeToTerms: checked as boolean,
+                                        }))
+                                    }
                                 />
-                                <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
+                                <label
+                                    htmlFor="terms"
+                                    className="text-sm text-muted-foreground cursor-pointer"
+                                >
                                     I agree to the{" "}
                                     <a href="#" className="text-primary hover:underline">
                                         terms and conditions
@@ -188,5 +171,5 @@ export default function RegisterPage() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
